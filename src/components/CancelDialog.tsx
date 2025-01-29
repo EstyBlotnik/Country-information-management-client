@@ -7,35 +7,28 @@ import {
   Button,
 } from "@mui/material";
 
-interface DeleteDialogProps {
+interface CancelDialogProps {
   open: boolean;
   onClose: () => void;
-  onDelete: (id: string) => void;
-  countryId: string;
+  onCancele: () => void;
 }
 
-const DeleteDialog: React.FC<DeleteDialogProps> = ({
+const CancelDialog: React.FC<CancelDialogProps> = ({
   open,
   onClose,
-  onDelete,
-  countryId,
+  onCancele,
 }) => {
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Are you sure?</DialogTitle>
       <DialogContent>
-        <p>Do you really want to delete this country?</p>
+        <p>Do you really want to cancel editing this country?</p>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary">
           No
         </Button>
-        <Button
-          onClick={() => {
-            onDelete(countryId);
-          }}
-          color="secondary"
-        >
+        <Button onClick={onCancele} color="secondary">
           Yes
         </Button>
       </DialogActions>
@@ -43,4 +36,4 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
   );
 };
 
-export default DeleteDialog;
+export default CancelDialog;
