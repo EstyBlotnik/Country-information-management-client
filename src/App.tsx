@@ -14,8 +14,11 @@ import LoginPage from "./components/Login";
 import SignUpForm from "./components/SignUpForm";
 import PasswordResetRequest from "./components/RequestPasswordReset";
 import PasswordReset from "./components/ResetPasswors";
-import AdminRoute from "./components/AdminRoute";
-import { AllUsersPage } from "./components/AllUsersPage";
+import EditUserForm from "./components/EditUserForm";
+import DynamicPage from "./components/DynamicPage";
+import UserProfile from "./components/UserProfile";
+import "./App.css"
+import HomePage from "./components/HomePage";
 const queryClient = new QueryClient();
 
 export const countryState = atom<CountryData | null>({
@@ -32,8 +35,9 @@ export default function App() {
             <div className="App">
               <ToastContainer />
               <NavBar />
-              <Routes>
-                {/* <Route path="/allusers">
+              <div className="body">
+                <Routes>
+                  {/* <Route path="/allusers">
                   element=
                   {
                     <AdminRoute
@@ -42,27 +46,35 @@ export default function App() {
                     />
                   }
                 </Route> */}
-                <Route path="/" element={<LandingPage />} />
-                <Route path={"/country"} element={<Country />} />
-                <Route path={"/register"} element={<SignUpForm />} />
-                <Route path={"/login"} element={<LoginPage />} />
-                <Route
-                  path={"/passwordresetrequest"}
-                  element={<PasswordResetRequest />}
-                />
-                <Route
-                  path={"/passwordreset/:token"}
-                  element={<PasswordReset />}
-                />
-                <Route
-                  path={"/editCountry/:id"}
-                  element={<ValidationCountryData />}
-                />
-                <Route
-                  path={"/addCountry"}
-                  element={<ValidationCountryData />}
-                />
-              </Routes>
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path={"/country"} element={<Country />} />
+                  <Route path={"/register"} element={<SignUpForm />} />
+                  <Route path={"/login"} element={<LoginPage />} />
+                  <Route
+                    path={"/home"}
+                    element={<HomePage />}
+                  />
+                  <Route
+                    path={"/passwordresetrequest"}
+                    element={<PasswordResetRequest />}
+                  />
+                  <Route
+                    path={"/passwordreset/:token"}
+                    element={<PasswordReset />}
+                  />
+                  <Route
+                    path={"/editCountry/:id"}
+                    element={<ValidationCountryData />}
+                  />
+                  <Route
+                    path={"/addCountry"}
+                    element={<ValidationCountryData />}
+                  />
+                  <Route path={"/profile"} element={<UserProfile />} />
+                  <Route path="/editUser/:id" element={<EditUserForm />} />
+                  <Route path="/:setting" element={<DynamicPage />} />
+                </Routes>
+              </div>
             </div>
             <ReactQueryDevtools initialIsOpen={false} />
           </Router>

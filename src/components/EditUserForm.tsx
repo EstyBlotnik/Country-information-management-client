@@ -1,5 +1,5 @@
 import React from "react";
-import { TextField, Button, Grid, Box } from "@mui/material";
+import { TextField, Button, Grid, Box, Avatar } from "@mui/material";
 import { Formik, Field, Form, ErrorMessage, FieldProps } from "formik";
 import * as Yup from "yup";
 import { useUser } from "../hooks/useUser";
@@ -14,23 +14,11 @@ const validationSchema = Yup.object({
     .matches(/^(\d{10})$/, "Phone number must be 10 digits")
     .required("Phone number is required"),
   userName: Yup.string().required("Username is required"),
-  password: Yup.string()
-    .min(8, "Password must be at least 8 characters")
-    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
-    .matches(/[0-9]/, "Password must contain at least one digit")
-    .matches(/[\W_]/, "Password must contain at least one special character")
-    .required("Password is required"),
-
-  confirmPassword: Yup.string()
-    .nullable()
-    .oneOf([Yup.ref("password"), null], "Passwords must match")
-    .required("Confirm Password is required"),
   profilePicture: Yup.mixed().nullable(),
 });
 
-const SignupForm = () => {
-  const { registerUser } = useUser();
+const EditUserForm = () => {
+  const { user, updateUser } = useUser();
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     setFieldValue: any
@@ -40,38 +28,34 @@ const SignupForm = () => {
       setFieldValue("profilePicture", file);
     }
   };
-
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = (values: any) => {
+    console.log("values:", values);
     const formData = new FormData();
-
-    // הוספת כל השדות לטופס
     Object.entries(values).forEach(([key, value]) => {
       if (key === "profilePicture" && value instanceof File) {
-        formData.append(key, value); // הוספת קובץ
+        formData.append(key, value);
       } else {
         formData.append(key, value as string);
       }
     });
-
-    console.log("FormData being sent:");
-    for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
+    console.log("formData: ");
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
     }
-    console.log("formData: " + formData);
-    registerUser(formData as any);
+    user?._id && updateUser({ userId: user._id, updatedData: formData as any });
   };
-
+  if (!user) {
+    return <div>Loading...</div>;
+  }
   return (
     <Formik
       initialValues={{
-        firstName: "",
-        lastName: "",
-        email: "",
-        phoneNumber: "",
+        firstName: user?.firstName || "",
+        lastName: user?.lastName || "",
+        email: user?.email || "",
+        phoneNumber: user?.phoneNumber || "",
         profilePicture: null,
-        userName: "",
-        password: "",
-        confirmPassword: "",
+        userName: user?.userName || "",
       }}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
@@ -86,11 +70,51 @@ const SignupForm = () => {
           }}
         >
           <Box className="landing-page__box">
-            <h2 className="landing-page__title">Sign Up</h2>
+            <Grid item xs={12} container justifyContent="center">
+              <Avatar
+                src={
+                  `http://localhost:4000${user.profilePicture}` ||
+                  "/default-avatar.png"
+                }
+                alt={user.userName}
+                sx={{ width: 150, height: 150, mb: 2 }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <input
+                id="profilePicture"
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={(e) => handleFileChange(e, setFieldValue)}
+              />
+              <label htmlFor="profilePicture">
+                <Button variant="contained" component="span">
+                  Change profile picture
+                </Button>
+              </label>
+              <ErrorMessage
+                name="profilePicture"
+                component="div"
+                className="error-message"
+              />
+            </Grid>
+            {/* <Grid item xs={12}>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleFileChange(e, setFieldValue)}
+              />
+              <ErrorMessage
+                name="profilePicture"
+                component="div"
+                className="error-message"
+              />
+            </Grid> */}
+            <h2 className="landing-page__title">Edit Profile</h2>
             <p className="landing-page__description">
-              Please fill in your details to create an account
+              You can edit your personal details here.{" "}
             </p>
-
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
                 <Field name="firstName">
@@ -166,50 +190,6 @@ const SignupForm = () => {
                   )}
                 </Field>
               </Grid>
-
-              <Grid item xs={12}>
-                <Field name="password">
-                  {({ field, meta }: FieldProps) => (
-                    <TextField
-                      {...field}
-                      label="Password"
-                      type="password"
-                      fullWidth
-                      variant="outlined"
-                      error={meta.touched && Boolean(meta.error)}
-                      helperText={meta.touched && meta.error ? meta.error : ""}
-                    />
-                  )}
-                </Field>
-              </Grid>
-              <Grid item xs={12}>
-                <Field name="confirmPassword">
-                  {({ field, meta }: FieldProps) => (
-                    <TextField
-                      {...field}
-                      label="confirm Password"
-                      type="password"
-                      fullWidth
-                      variant="outlined"
-                      error={meta.touched && Boolean(meta.error)}
-                      helperText={meta.touched && meta.error ? meta.error : ""}
-                    />
-                  )}
-                </Field>
-              </Grid>
-
-              <Grid item xs={12}>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleFileChange(e, setFieldValue)}
-                />
-                <ErrorMessage
-                  name="profilePicture"
-                  component="div"
-                  className="error-message"
-                />
-              </Grid>
             </Grid>
 
             <Button
@@ -220,7 +200,7 @@ const SignupForm = () => {
               disabled={isSubmitting}
               className="landing-page__button"
             >
-              Sign Up
+              Save changes
             </Button>
           </Box>
         </Form>
@@ -229,4 +209,4 @@ const SignupForm = () => {
   );
 };
 
-export default SignupForm;
+export default EditUserForm;

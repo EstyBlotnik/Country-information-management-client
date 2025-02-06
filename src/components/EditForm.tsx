@@ -34,7 +34,6 @@ export const ValidationCountryData = () => {
   const [country, setCountry] = useState<CountryData | null>(null);
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  console.log("id:", id);
   useEffect(() => {
     if (id) {
       const fetchedCountry = getCountryById(id);
@@ -47,7 +46,7 @@ export const ValidationCountryData = () => {
 
   const handleCancelEdit = (): void => {
     console.log("Cancel edit action triggered.");
-    navigate("/"); // נווט לעמוד הבית
+    navigate("/");
   };
   const handleCancelConfirmation = () => {
     setCancelDialogOpen(true);

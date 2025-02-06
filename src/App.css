@@ -1,10 +1,9 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
+  margin: 0;
   padding: 2rem;
   text-align: center;
 }
 .App {
-  margin-top: 64px;
+  margin-top: 80px;
   width: 100vw;
 }

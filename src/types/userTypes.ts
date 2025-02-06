@@ -4,10 +4,10 @@ export type userData = {
   lastName: string;
   email: string;
   phoneNumber: string;
-  profilePicture?: string;
+  profilePicture?: string | File;
   role: "View" | "Edit" | "Add" | "Delete" | "Admin";
   userName: string;
-  password: string;
+  password?: string;
   JoiningDate: Date;
 };
 
