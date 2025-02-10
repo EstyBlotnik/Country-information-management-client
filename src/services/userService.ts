@@ -1,6 +1,10 @@
-const apiUrl = "http://localhost:4000/user";
 import axios from "axios";
 import { userData, UserResponse, ErrorResponse } from "../types/userTypes";
+import API_URL from "../config/apiConfig";
+
+const apiUrl = `${API_URL}/user`;
+const apiAdminUrl = `${API_URL}/admin`;
+const validPermissions = ["Edit", "Add", "Delete"];
 
 export const register = async (data: userData) => {
   console.log("Adding data:", data);
@@ -129,5 +133,77 @@ export const getUser = async (userId: string) => {
       status: error.response?.status || 500,
       message: error.response?.data?.message || "An error occurred",
     };
+  }
+};
+
+export const getAllUsers = async () => {
+  try {
+    const response = await axios.get(`${apiAdminUrl}/users`, {
+      withCredentials: true,
+    });
+    console.log("response: ", response.data.users);
+    if (response.status === 200) {
+      return {
+        success: true,
+        status: response.status,
+        data: response.data.users,
+      };
+    } else {
+      return {
+        success: false,
+        status: response.status,
+        message: "Invalid credentials",
+      };
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      status: error.response?.status || 500,
+      message: error.response?.data?.message || "An error occurred",
+    };
+  }
+};
+
+export const deleteUser = async (userId: string) => {
+  try {
+    const response = await axios.delete(`${apiAdminUrl}/users/${userId}`, {
+      withCredentials: true,
+    });
+    console.log("response: ", response.data);
+  } catch (error: any) {
+    console.log("something went wrong");
+  }
+};
+
+export const changeRoleReqest = async (userId: string, role: string) => {
+  if (!validPermissions.includes(role)) {
+    throw new Error("Invalid role");
+  }
+  console.log("role", role);
+  try {
+    const response = await axios.put(
+      `${apiUrl}/changeRole/${userId}`,
+      { newRole: role },
+      {
+        withCredentials: true,
+      }
+    );
+    console.log("response: ", response.data);
+  } catch (error: any) {
+    console.log("something went wrong");
+  }
+};
+
+export const fetchPermissionRequestsFromServer = async () => {
+  console.log("fetchPermissionRequestsFromServer")
+  try {
+    const response = await axios.get(`${apiAdminUrl}/allReqests`, {
+      withCredentials: true,
+    });
+    console.log("respons from server:", response.data.reqests);
+    return response.data.reqests;
+  } catch {
+    console.log("something went wrong");
+    return [];
   }
 };

@@ -17,8 +17,12 @@ import PasswordReset from "./components/ResetPasswors";
 import EditUserForm from "./components/EditUserForm";
 import DynamicPage from "./components/DynamicPage";
 import UserProfile from "./components/UserProfile";
-import "./App.css"
+import "./App.css";
 import HomePage from "./components/HomePage";
+import theme from "./style/theme";
+import { ThemeProvider } from "@emotion/react";
+import { AllUsersPage } from "./components/AllUsersPage";
+import AdminPage from "./components/AdminPage";
 const queryClient = new QueryClient();
 
 export const countryState = atom<CountryData | null>({
@@ -34,10 +38,11 @@ export default function App() {
           <Router>
             <div className="App">
               <ToastContainer />
-              <NavBar />
-              <div className="body">
-                <Routes>
-                  {/* <Route path="/allusers">
+              <ThemeProvider theme={theme}>
+                <NavBar />
+                <div className="body">
+                  <Routes>
+                    {/* <Route path="/allusers">
                   element=
                   {
                     <AdminRoute
@@ -46,35 +51,42 @@ export default function App() {
                     />
                   }
                 </Route> */}
-                  <Route path="/" element={<LandingPage />} />
-                  <Route path={"/country"} element={<Country />} />
-                  <Route path={"/register"} element={<SignUpForm />} />
-                  <Route path={"/login"} element={<LoginPage />} />
-                  <Route
-                    path={"/home"}
-                    element={<HomePage />}
-                  />
-                  <Route
-                    path={"/passwordresetrequest"}
-                    element={<PasswordResetRequest />}
-                  />
-                  <Route
-                    path={"/passwordreset/:token"}
-                    element={<PasswordReset />}
-                  />
-                  <Route
-                    path={"/editCountry/:id"}
-                    element={<ValidationCountryData />}
-                  />
-                  <Route
-                    path={"/addCountry"}
-                    element={<ValidationCountryData />}
-                  />
-                  <Route path={"/profile"} element={<UserProfile />} />
-                  <Route path="/editUser/:id" element={<EditUserForm />} />
-                  <Route path="/:setting" element={<DynamicPage />} />
-                </Routes>
-              </div>
+                    <Route path="/" element={<LandingPage />} />
+                    <Route path={"/countries"} element={<Country />} />
+                    <Route path={"/register"} element={<SignUpForm />} />
+                    <Route path={"/login"} element={<LoginPage />} />
+                    <Route path={"/home"} element={<HomePage />} />
+                    <Route
+                      path={"/passwordresetrequest"}
+                      element={<PasswordResetRequest />}
+                    />
+                    <Route
+                      path={"/passwordreset/:token"}
+                      element={<PasswordReset />}
+                    />
+                    <Route
+                      path={"/editCountry/:id"}
+                      element={<ValidationCountryData />}
+                    />
+                    <Route
+                      path={"/addCountry"}
+                      element={<ValidationCountryData />}
+                    />
+                    <Route path={"/profile"} element={<UserProfile />} />
+                    <Route
+                      path="/editUser/:id"
+                      element={<EditUserForm editFor="anOtherUser" />}
+                    />
+                    <Route
+                      path="/editProfile/:id"
+                      element={<EditUserForm editFor={"mySelf"} />}
+                    />
+                    <Route path="allusers" element={<AllUsersPage />} />
+                    <Route path="adminPage" element={<AdminPage />} />
+                    <Route path="/:setting" element={<DynamicPage />} />
+                  </Routes>
+                </div>
+              </ThemeProvider>
             </div>
             <ReactQueryDevtools initialIsOpen={false} />
           </Router>

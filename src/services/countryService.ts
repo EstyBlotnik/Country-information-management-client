@@ -1,5 +1,7 @@
 import { CountryData, CountryWithoutID } from "../types/countryTypes";
-const apiUrl = "http://localhost:4000/countries";
+import API_URL from "../config/apiConfig"; 
+
+const apiUrl = `${API_URL}/countries`;
 import axios from "axios";
 
 export const fetchCountries = async (): Promise<CountryData[]> => {

@@ -1,24 +1,56 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { TextField, Button, Grid, Box, Avatar } from "@mui/material";
 import { Formik, Field, Form, ErrorMessage, FieldProps } from "formik";
 import * as Yup from "yup";
 import { useUser } from "../hooks/useUser";
+import { useUsers } from "../hooks/useUsers";
 import "../style/signupForm.scss";
+import API_URL from "../config/apiConfig";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { userData } from "../types/userTypes";
+
 const validationSchema = Yup.object({
-  firstName: Yup.string().required("First Name is required"),
-  lastName: Yup.string().required("Last Name is required"),
+  firstName: Yup.string()
+    .required("First Name is required")
+    .test("no-noSQL", "Invalid first name", (value) => {
+      return !/[{}$]/.test(value);
+    }),
+  lastName: Yup.string()
+    .required("Last Name is required")
+    .test("no-noSQL", "Invalid last name", (value) => {
+      return !/[{}$]/.test(value);
+    }),
   email: Yup.string()
     .email("Invalid email format")
     .required("Email is required"),
   phoneNumber: Yup.string()
     .matches(/^(\d{10})$/, "Phone number must be 10 digits")
     .required("Phone number is required"),
-  userName: Yup.string().required("Username is required"),
+  userName: Yup.string()
+    .required("Username is required")
+    .test("no-noSQL", "Invalid Username", (value) => {
+      return !/[{}$]/.test(value);
+    }),
   profilePicture: Yup.mixed().nullable(),
 });
 
-const EditUserForm = () => {
+const EditUserForm = ({ editFor }: { editFor: "mySelf" | "anOtherUser" }) => {
   const { user, updateUser } = useUser();
+  const { updateSelectedUser, getUserById } = useUsers();
+  const [selectedUser, setSelectedUser] = useState<userData | null>(null);
+  const navigate = useNavigate();
+
+  const { id } = useParams<{ id: string }>();
+  useEffect(() => {
+    if (id) {
+      const fetchedUser = getUserById(id);
+      if (fetchedUser) {
+        setSelectedUser(fetchedUser);
+      }
+      console.log("fetchedUser", fetchedUser);
+    }
+    console.log("user:", selectedUser);
+  }, [id, getUserById]);
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     setFieldValue: any
@@ -42,20 +74,44 @@ const EditUserForm = () => {
     for (let [key, value] of formData.entries()) {
       console.log(key, value);
     }
-    user?._id && updateUser({ userId: user._id, updatedData: formData as any });
+    if (editFor === "mySelf") {
+      user?._id &&
+        updateUser({ userId: user._id, updatedData: formData as any });
+    } else {
+      selectedUser?._id &&
+        updateSelectedUser({
+          userId: selectedUser._id,
+          updatedData: formData as any,
+        });
+      navigate("/allusers");
+    }
   };
   if (!user) {
     return <div>Loading...</div>;
   }
   return (
     <Formik
+      enableReinitialize
       initialValues={{
-        firstName: user?.firstName || "",
-        lastName: user?.lastName || "",
-        email: user?.email || "",
-        phoneNumber: user?.phoneNumber || "",
+        firstName:
+          editFor === "mySelf"
+            ? user?.firstName || ""
+            : selectedUser?.firstName || "",
+        lastName:
+          editFor === "mySelf"
+            ? user?.lastName || ""
+            : selectedUser?.lastName || "",
+        email:
+          editFor === "mySelf" ? user?.email || "" : selectedUser?.email || "",
+        phoneNumber:
+          editFor === "mySelf"
+            ? user?.phoneNumber || ""
+            : selectedUser?.phoneNumber || "",
         profilePicture: null,
-        userName: user?.userName || "",
+        userName:
+          editFor === "mySelf"
+            ? user?.userName || ""
+            : selectedUser?.userName || "",
       }}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
@@ -73,8 +129,11 @@ const EditUserForm = () => {
             <Grid item xs={12} container justifyContent="center">
               <Avatar
                 src={
-                  `http://localhost:4000${user.profilePicture}` ||
-                  "/default-avatar.png"
+                  editFor === "mySelf"
+                    ? `${API_URL}${user.profilePicture}` ||
+                      "/default-avatar.png"
+                    : `${API_URL}${selectedUser?.profilePicture}` ||
+                      "/default-avatar.png"
                 }
                 alt={user.userName}
                 sx={{ width: 150, height: 150, mb: 2 }}
@@ -99,21 +158,14 @@ const EditUserForm = () => {
                 className="error-message"
               />
             </Grid>
-            {/* <Grid item xs={12}>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleFileChange(e, setFieldValue)}
-              />
-              <ErrorMessage
-                name="profilePicture"
-                component="div"
-                className="error-message"
-              />
-            </Grid> */}
-            <h2 className="landing-page__title">Edit Profile</h2>
+
+            <h2 className="landing-page__title">
+              {editFor === "mySelf" ? "Edit Profile" : "Edit User"}
+            </h2>
             <p className="landing-page__description">
-              You can edit your personal details here.{" "}
+              You can edit{" "}
+              {editFor === "mySelf" ? "your personal" : "users personal"}{" "}
+              details here.{" "}
             </p>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>

@@ -9,15 +9,22 @@ import "../style/editFile.scss";
 import { useParams } from "react-router-dom";
 import { CountryData } from "../types/countryTypes";
 import VerificationDialog from "./VerificationDialogue";
+
 const CountryScema = Yup.object().shape({
   name: Yup.string()
     .min(3, "Name is too Short!")
     .max(50, "Name is too Long!")
-    .required("Name is equired"),
+    .required("Name is equired")
+    .test("no-noSQL", "Invalid Name", (value) => {
+      return !/[{}$]/.test(value);
+    }),
   flag: Yup.string()
     .min(2, "Too Short!")
     .max(50, "Too Long!")
-    .matches(/^https:\/\//, "must start with 'https://'"),
+    .matches(/^https:\/\//, "must start with 'https://'")
+    .test("no-noSQL", "Invalid Name", (value) => {
+      return value?!/[{}$]/.test(value):true;
+    }),
   population: Yup.number()
     .positive("Population must be positive")
     .integer("Population must be an integer")
@@ -25,7 +32,10 @@ const CountryScema = Yup.object().shape({
   region: Yup.string()
     .min(3, "Region is too Short!")
     .max(50, "Region is too Long!")
-    .required("Region is required"),
+    .required("Region is required")
+    .test("no-noSQL", "Invalid region", (value) => {
+      return !/[{}$]/.test(value);
+    }),
 });
 
 export const ValidationCountryData = () => {
@@ -46,7 +56,7 @@ export const ValidationCountryData = () => {
 
   const handleCancelEdit = (): void => {
     console.log("Cancel edit action triggered.");
-    navigate("/");
+    navigate("/countries");
   };
   const handleCancelConfirmation = () => {
     setCancelDialogOpen(true);
@@ -71,13 +81,12 @@ export const ValidationCountryData = () => {
               countryId,
               updatedData: { ...values, _id: countryId },
             });
-            
           } else {
             addCountry(values);
           }
 
           console.log("submitted: ", values);
-          navigate("/");
+          navigate("/home");
         }}
       >
         {({ errors, touched, dirty, isValid }) => (
@@ -155,7 +164,7 @@ export const ValidationCountryData = () => {
         )}
       </Formik>
       <VerificationDialog
-        dialogFor= {country? "edit" : "add"  }
+        dialogFor={country ? "edit" : "add"}
         open={cancelDialogOpen}
         onClose={() => {
           setCancelDialogOpen(false);

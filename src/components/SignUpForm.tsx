@@ -4,24 +4,45 @@ import { Formik, Field, Form, ErrorMessage, FieldProps } from "formik";
 import * as Yup from "yup";
 import { useUser } from "../hooks/useUser";
 import "../style/signupForm.scss";
+
 const validationSchema = Yup.object({
-  firstName: Yup.string().required("First Name is required"),
-  lastName: Yup.string().required("Last Name is required"),
+  firstName: Yup.string()
+    .required("First Name is required")
+    .test("no-noSQL", "Invalid first name", (value) => {
+      return !/[{}$]/.test(value);
+    }),
+  lastName: Yup.string()
+    .required("Last Name is required")
+    .test("no-noSQL", "Invalid last name", (value) => {
+      return !/[{}$]/.test(value);
+    }),
   email: Yup.string()
     .email("Invalid email format")
-    .required("Email is required"),
+    .required("Email is required")
+    .test("no-noSQL", "Invalid email format", (value) => {
+      return !/[{}$]/.test(value);
+    }),
   phoneNumber: Yup.string()
     .matches(/^(\d{10})$/, "Phone number must be 10 digits")
-    .required("Phone number is required"),
-  userName: Yup.string().required("Username is required"),
+    .required("Phone number is required")
+    .test("no-noSQL", "Invalid phoneNumber", (value) => {
+      return !/[{}$]/.test(value);
+    }),
+  userName: Yup.string()
+    .required("Username is required")
+    .test("no-noSQL", "Invalid Username", (value) => {
+      return !/[{}$]/.test(value);
+    }),
   password: Yup.string()
     .min(8, "Password must be at least 8 characters")
     .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
     .matches(/[a-z]/, "Password must contain at least one lowercase letter")
     .matches(/[0-9]/, "Password must contain at least one digit")
     .matches(/[\W_]/, "Password must contain at least one special character")
-    .required("Password is required"),
-
+    .required("Password is required")
+    .test("no-noSQL", "Invalid Password", (value) => {
+      return !/[{}$]/.test(value);
+    }),
   confirmPassword: Yup.string()
     .nullable()
     .oneOf([Yup.ref("password"), null], "Passwords must match")

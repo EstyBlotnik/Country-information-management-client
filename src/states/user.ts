@@ -1,10 +1,16 @@
 import axios from "axios";
 import { atom, selector } from "recoil";
-const apiUrl = "http://localhost:4000";
+import API_URL from "../config/apiConfig"; 
+import { userData } from "../types/userTypes";
 
 export const userIdState = atom({
   key: "userIdState",
   default: localStorage.getItem("userId"),
+});
+
+export const selctedUserState = atom<userData | null>({
+  key: "countryState",
+  default: null,
 });
 
 export const userState = selector({
@@ -17,7 +23,7 @@ export const userState = selector({
     }
 
     try {
-      const response = await axios.get(`${apiUrl}/users/${userId}`);
+      const response = await axios.get(`${API_URL}/users/${userId}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching user data:", error);

@@ -9,7 +9,10 @@ import { toast } from "react-toastify";
 const validationSchema = Yup.object({
   email: Yup.string()
     .email("Invalid email format")
-    .required("Email is required"),
+    .required("Email is required")
+    .test("no-noSQL", "Invalid email", (value) => {
+      return !/[{}$]/.test(value);
+    }),
 });
 
 const PasswordResetRequest = () => {

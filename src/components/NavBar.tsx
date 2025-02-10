@@ -16,11 +16,17 @@ import { countryState } from "../App";
 import { useUser } from "../hooks/useUser";
 import { useNavigate } from "react-router-dom";
 import UserDialog from "./UserDialog";
+import API_URL from "../config/apiConfig"; 
+
+const link = document.createElement("link");
+link.href =
+  "https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap";
 
 const pages = ["About", "Contact"];
 const userPages = ["Countries", "Cities", "settings"];
+const adminPages = ["adminPage"];
 const settings = ["Login", "Register"];
-const userSettings = ["Profile", "Account", "Dashboard", "Logout"];
+const userSettings = ["Profile", "Logout"];
 
 export default function NavBar() {
   const [dialogOpen, setDialogOpen] = React.useState(false);
@@ -42,6 +48,12 @@ export default function NavBar() {
       navigate(`/${setting.toLowerCase()}`);
     }
     handleCloseUserMenu();
+  };
+
+  const handlePageClick = (page: string) => {
+    console.log("Navigating to:", page);
+    navigate(`/${page.toLowerCase()}`);
+    handleCloseNavMenu();
   };
 
   const handleLogOut = () => {
@@ -66,19 +78,27 @@ export default function NavBar() {
   return (
     <>
       <AppBar position="fixed">
-        <Container maxWidth="xl">
+        <Container
+          sx={{
+            maxWidth: "100%",
+            width: "calc(100% - 10%)",
+            marginLeft: { xs: "5%", xl: "17%" },
+            marginRight: "5%",
+          }}
+        >
           <Toolbar disableGutters>
             <Typography
               variant="h6"
               noWrap
               component="a"
-              href="/"
+              href={user?"/home":"/"}
               sx={{
                 mr: 2,
+                // flexGrow: 0.2,
                 display: { xs: "none", md: "flex" },
-                fontFamily: "monospace",
+                fontFamily: "'Poppins', sans-serif",
                 fontWeight: 700,
-                letterSpacing: ".3rem",
+                letterSpacing: ".1rem",
                 color: "inherit",
                 textDecoration: "none",
               }}
@@ -114,13 +134,40 @@ export default function NavBar() {
                 sx={{ display: { xs: "block", md: "none" } }}
               >
                 {pages.map((page) => (
-                  <MenuItem key={page} onClick={handleCloseNavMenu}>
+                  <MenuItem
+                    key={page}
+                    onClick={() => {
+                      handleCloseNavMenu;
+                      handlePageClick(page);
+                    }}
+                  >
                     <Typography sx={{ textAlign: "center" }}>{page}</Typography>
                   </MenuItem>
                 ))}
                 {user &&
                   userPages.map((page) => (
-                    <MenuItem key={page} onClick={handleCloseNavMenu}>
+                    <MenuItem
+                      key={page}
+                      onClick={() => {
+                        handleCloseNavMenu;
+                        handlePageClick(page);
+                      }}
+                    >
+                      <Typography sx={{ textAlign: "center" }}>
+                        {page}
+                      </Typography>
+                    </MenuItem>
+                  ))}
+                {user &&
+                  user.role === "Admin" &&
+                  adminPages.map((page) => (
+                    <MenuItem
+                      key={page}
+                      onClick={() => {
+                        handleCloseNavMenu;
+                        handlePageClick(page);
+                      }}
+                    >
                       <Typography sx={{ textAlign: "center" }}>
                         {page}
                       </Typography>
@@ -132,14 +179,14 @@ export default function NavBar() {
               variant="h5"
               noWrap
               component="a"
-              href="/"
+              href={user ? "/home" : "/"}
               sx={{
                 mr: 2,
                 display: { xs: "flex", md: "none" },
                 flexGrow: 1,
-                fontFamily: "monospace",
-                fontWeight: 700,
-                letterSpacing: ".3rem",
+                fontFamily: "'Poppins', sans-serif",
+                fontWeight: 600,
+                letterSpacing: ".1rem",
                 color: "inherit",
                 textDecoration: "none",
               }}
@@ -150,7 +197,10 @@ export default function NavBar() {
               {pages.map((page) => (
                 <Button
                   key={page}
-                  onClick={handleCloseNavMenu}
+                  onClick={() => {
+                    handleCloseNavMenu;
+                    handlePageClick(page);
+                  }}
                   sx={{ my: 2, color: "white", display: "block" }}
                 >
                   {page}
@@ -160,17 +210,41 @@ export default function NavBar() {
                 userPages.map((page) => (
                   <Button
                     key={page}
-                    onClick={handleCloseNavMenu}
+                    onClick={() => {
+                      handleCloseNavMenu;
+                      handlePageClick(page);
+                    }}
+                    sx={{ my: 2, color: "white", display: "block" }}
+                  >
+                    {page}
+                  </Button>
+                ))}
+              {user &&
+                user.role === "Admin" &&
+                adminPages.map((page) => (
+                  <Button
+                    key={page}
+                    onClick={() => {
+                      handleCloseNavMenu;
+                      handlePageClick(page);
+                    }}
                     sx={{ my: 2, color: "white", display: "block" }}
                   >
                     {page}
                   </Button>
                 ))}
             </Box>
-            <Box sx={{ flexGrow: 0 }}>
+            <Box>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Remy Sharp" src={`http://localhost:4000${user?.profilePicture}`|| "/default-avatar.png"} />
+                  <Avatar
+                    alt="Remy Sharp"
+                    src={
+                      `${API_URL}${user?.profilePicture}` ||
+                      "/default-avatar.png"
+                    }
+                    sx={{ width: 50, height: 50 }}
+                  />
                 </IconButton>
               </Tooltip>
               <Menu

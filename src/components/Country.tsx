@@ -82,7 +82,7 @@ export const Country = () => {
         ),
       },
     ],
-    [] // מכיוון ש-columns לא משתנה
+    []
   );
 
   const handleEdit = (selectedCountry: CountryData) => {
@@ -101,7 +101,7 @@ export const Country = () => {
   const handleDelete = (id: string) => {
     console.log("Deleting country with id:", id);
     setDeleteDialogOpen(false);
-    deleteMutation.mutate(id); // שולח את ה-id למחיקה
+    deleteMutation.mutate(id);
   };
 
   const handleCancel = () => {
@@ -114,10 +114,6 @@ export const Country = () => {
   return (
     <div className="container">
       <h1 className="title">Countries list:</h1>
-      {/* {deleteMutation.isError && toast.error("Error deleting the country")}
-
-      {deleteMutation.isSuccess &&
-        toast.success("Country deleted successfully")} */}
       <DataGrid
         rows={rows}
         columns={columns}
