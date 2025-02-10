@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { TextField, Button, Grid, Box, Avatar } from "@mui/material";
 import { Formik, Field, Form, ErrorMessage, FieldProps } from "formik";
 import * as Yup from "yup";
-import { useUser } from "../hooks/useUser";
-import { useUsers } from "../hooks/useUsers";
-import "../style/signupForm.scss";
-import API_URL from "../config/apiConfig";
+import { useUser } from "../../hooks/useUser";
+import { useUsers } from "../../hooks/useUsers";
+import "../../style/signupForm.scss";
+import API_URL from "../../config/apiConfig";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
-import { userData } from "../types/userTypes";
+import { userData } from "../../types/userTypes";
 
 const validationSchema = Yup.object({
   firstName: Yup.string()

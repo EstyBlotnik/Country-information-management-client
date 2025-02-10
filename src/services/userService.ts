@@ -195,7 +195,7 @@ export const changeRoleReqest = async (userId: string, role: string) => {
 };
 
 export const fetchPermissionRequestsFromServer = async () => {
-  console.log("fetchPermissionRequestsFromServer")
+  console.log("fetchPermissionRequestsFromServer");
   try {
     const response = await axios.get(`${apiAdminUrl}/allReqests`, {
       withCredentials: true,
@@ -205,5 +205,21 @@ export const fetchPermissionRequestsFromServer = async () => {
   } catch {
     console.log("something went wrong");
     return [];
+  }
+};
+
+export const changeRoleResponse = async (reqId: string, approved: boolean) => {
+  console.log("changeRoleResponse");
+  try {
+    const response = await axios.put(
+      `${apiAdminUrl}/changeRoleResponse/${reqId}`,
+      { approved },
+      {
+        withCredentials: true,
+      }
+    );
+    console.log("response: ", response.data);
+  } catch {
+    console.log("something went wrong");
   }
 };

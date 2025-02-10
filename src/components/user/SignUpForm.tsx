@@ -2,8 +2,8 @@ import React from "react";
 import { TextField, Button, Grid, Box } from "@mui/material";
 import { Formik, Field, Form, ErrorMessage, FieldProps } from "formik";
 import * as Yup from "yup";
-import { useUser } from "../hooks/useUser";
-import "../style/signupForm.scss";
+import { useUser } from "../../hooks/useUser";
+import "../../style/signupForm.scss";
 
 const validationSchema = Yup.object({
   firstName: Yup.string()

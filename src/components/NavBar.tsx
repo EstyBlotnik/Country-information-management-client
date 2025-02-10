@@ -15,7 +15,7 @@ import { useRecoilValue } from "recoil";
 import { countryState } from "../App";
 import { useUser } from "../hooks/useUser";
 import { useNavigate } from "react-router-dom";
-import UserDialog from "./UserDialog";
+import UserDialog from "./user/UserDialog";
 import API_URL from "../config/apiConfig"; 
 
 const link = document.createElement("link");

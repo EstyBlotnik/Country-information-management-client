@@ -1,69 +1,65 @@
 import { FaSpinner } from "react-icons/fa";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { countryState } from "../../App";
 import { useNavigate } from "react-router-dom";
+import { useCountries } from "../../hooks/useCountries";
+import { CountryData } from "../../types/countryTypes";
 import { FaPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
-import "../style/Country.scss";
+import "../../style/Country.scss";
 import { useMemo } from "react";
 import VerificationDialog from "./VerificationDialogue";
-import { useUsers } from "../hooks/useUsers";
-import { Avatar } from "@mui/material";
-import { userData } from "../types/userTypes";
-import API_URL from "../config/apiConfig"; 
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { selctedUserState } from "../states/user";
-export const AllUsersPage = () => {
+export const Country = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [userId, setUserId] = useState<string>("");
+  const [countryId, setCountryId] = useState<string>("");
+
+  const setCountry = useSetRecoilState(countryState);
+  const country = useRecoilValue(countryState);
   const navigate = useNavigate();
-  const { users, isLoading, error, deleteMutation, getUserById } = useUsers();
-  const setSelectedUser = useSetRecoilState(selctedUserState);
-  const selectedUser = useRecoilValue(selctedUserState);
+
+  const { countries, isLoading, error, deleteMutation } = useCountries();
   useEffect(() => {
     if (deleteMutation.isSuccess) {
-      toast.success("User deleted successfully");
+      toast.success("Country deleted successfully");
     }
 
     if (deleteMutation.isError) {
-      toast.error("Error deleting the user");
+      toast.error("Error deleting the country");
     }
   }, [deleteMutation.isSuccess, deleteMutation.isError]);
 
   const rows: GridRowsProp = useMemo(
     () =>
-      users?.map((user) => ({
-        id: user._id,
-        _id: user._id,
-        profilePicture: user.profilePicture,
-        name: user.firstName + " " + user.lastName,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
+      countries?.map((country) => ({
+        id: country._id,
+        _id: country._id,
+        name: country.name,
+        region: country.region,
+        flag: country.flag,
+        population: country.population,
       })) || [],
-    [users]
+    [countries]
   );
 
   const columns: GridColDef[] = useMemo(
     () => [
+      { field: "name", headerName: "name", width: 150 },
+      { field: "region", headerName: "region", width: 150 },
+      { field: "population", headerName: "population", width: 150 },
       {
-        field: "profilePicture",
-        headerName: "Profile Picture",
+        field: "flag",
+        headerName: "flag",
         width: 150,
         renderCell: (params) => (
-          <Avatar
-            src={
-              `${API_URL}${params.value}` || "/default-avatar.png"
-            }
-            alt="user profle"
-            sx={{ width: 50, height: 50, mb: 2 }}
+          <img
+            src={params.value}
+            alt="Flag"
+            style={{ width: "70px", height: "40px" }}
           />
         ),
       },
-
-      { field: "name", headerName: "name", width: 150 },
-      { field: "email", headerName: "email", width: 150 },
-      { field: "phoneNumber", headerName: "phoneNumber", width: 150 },
-
       {
         field: "actions",
         headerName: "Actions",
@@ -89,27 +85,27 @@ export const AllUsersPage = () => {
     []
   );
 
-  const handleEdit = (selectedUser: userData) => {
-    console.log(selectedUser);
-    const fullSelectedUser = getUserById(selectedUser?._id||"")
-    setSelectedUser(fullSelectedUser||selectedUser);
-    console.log("selected user set to state", selectedUser);
-    navigate(`/editUser/${selectedUser._id}`);
+  const handleEdit = (selectedCountry: CountryData) => {
+    console.log(selectedCountry);
+    setCountry(selectedCountry);
+    console.log("selectedCountry set to state", selectedCountry);
+    navigate(`/editCountry/${selectedCountry._id}`);
+    console.log(country);
   };
 
   const handleDeleteConfirmation = (id: string) => {
     setDeleteDialogOpen(true);
-    setUserId(id);
+    setCountryId(id);
   };
 
   const handleDelete = (id: string) => {
-    console.log("Deleting user with id:", id);
+    console.log("Deleting country with id:", id);
     setDeleteDialogOpen(false);
-    deleteMutation.mutate(id); // שולח את ה-id למחיקה
+    deleteMutation.mutate(id);
   };
 
   const handleCancel = () => {
-    console.log("delete user was canceld");
+    console.log("delete country was canceld");
   };
 
   if (isLoading) return <FaSpinner className="spinner" />;
@@ -117,7 +113,7 @@ export const AllUsersPage = () => {
 
   return (
     <div className="container">
-      <h1 className="title">users list:</h1>
+      <h1 className="title">Countries list:</h1>
       <DataGrid
         rows={rows}
         columns={columns}
@@ -133,10 +129,10 @@ export const AllUsersPage = () => {
       />
       <button
         className="add-country-button"
-        onClick={() => navigate("/addUser")}
+        onClick={() => navigate("/addCountry")}
       >
         <FaPlus style={{ marginRight: "8px" }} />
-        Add a user
+        Add a country
       </button>
       <VerificationDialog
         dialogFor="delete"
@@ -146,10 +142,10 @@ export const AllUsersPage = () => {
           setDeleteDialogOpen(false);
         }}
         onDelete={() => {
-          handleDelete(userId);
+          handleDelete(countryId);
           setDeleteDialogOpen(false);
         }}
-        countryId={userId}
+        countryId={countryId}
       />
     </div>
   );

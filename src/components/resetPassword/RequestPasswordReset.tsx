@@ -2,8 +2,8 @@ import React from "react";
 import { TextField, Button, Box } from "@mui/material";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import "../style/signupForm.scss"; // תוודאי שאתה מייבאת את הסגנון המתאים
-import { forgotPasword } from "../services/resetPasswordService";
+import "../../style/signupForm.scss"; // תוודאי שאתה מייבאת את הסגנון המתאים
+import { forgotPasword } from "../../services/resetPasswordService";
 import { toast } from "react-toastify";
 
 const validationSchema = Yup.object({

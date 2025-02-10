@@ -6,9 +6,9 @@ import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import { userData } from "../types/userTypes";
+import { userData } from "../../types/userTypes";
 import { toast } from "react-toastify";
-import { changeRoleReqest } from "../services/userService";
+import { changeRoleReqest } from "../../services/userService";
 
 type UserRole = "View" | "Edit" | "Add" | "Delete" | "Admin";
 

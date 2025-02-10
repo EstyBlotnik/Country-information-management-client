@@ -4,4 +4,5 @@ export interface RequestData {
   userId: string;
   requestedRole: "Add" | "Delete" | "Edit";
   status: "Approved" | "Denied" | "Pending";
+  _id?: string;
 }

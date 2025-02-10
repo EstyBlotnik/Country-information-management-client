@@ -4,10 +4,10 @@ import * as Yup from "yup";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
-import { useCountries } from "../hooks/useCountries";
-import "../style/editFile.scss";
+import { useCountries } from "../../hooks/useCountries";
+import "../../style/editFile.scss";
 import { useParams } from "react-router-dom";
-import { CountryData } from "../types/countryTypes";
+import { CountryData } from "../../types/countryTypes";
 import VerificationDialog from "./VerificationDialogue";
 
 const CountryScema = Yup.object().shape({

@@ -6,6 +6,7 @@ import { useDemoRouter } from "@toolpad/core/internal";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import { AllUsersPage } from "./AllUsersPage";
 import PermissionRequests from "./PermissionRequests";
+import useAdminAuth from "../../hooks/permissions/useAdmin";
 
 const NAVIGATION: Navigation = [
   {
@@ -41,6 +42,7 @@ interface DemoProps {
 }
 
 export default function AdminPage(props: DemoProps) {
+  useAdminAuth();
   const { window } = props;
 
   const router = useDemoRouter("/allUsers");

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useUser } from '../hooks/useUser';
-import '../style/LoginPage.scss';
+import { useUser } from '../../hooks/useUser';
+import '../../style/LoginPage.scss';
 import { Link } from 'react-router-dom';
 
 const LoginPage = () => {

@@ -3,8 +3,8 @@ import { TextField, Button, Box } from "@mui/material";
 import { Navigate, useParams } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import "../style/signupForm.scss"; // תוודאי שאתה מייבאת את הסגנון המתאים
-import { resetPasswort } from "../services/resetPasswordService";
+import "../../style/signupForm.scss"; // תוודאי שאתה מייבאת את הסגנון המתאים
+import { resetPasswort } from "../../services/resetPasswordService";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 

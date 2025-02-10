@@ -1,28 +1,28 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import { Country } from "./components/Country";
+import { Country } from "./components/countries/Country";
 import NavBar from "./components/NavBar";
-import { ValidationCountryData } from "./components/EditForm";
+import { ValidationCountryData } from "./components/countries/EditForm";
 import { atom, RecoilRoot } from "recoil";
 import { CountryData } from "./types/countryTypes";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LandingPage from "./components/LandingPage";
-import LoginPage from "./components/Login";
-import SignUpForm from "./components/SignUpForm";
-import PasswordResetRequest from "./components/RequestPasswordReset";
-import PasswordReset from "./components/ResetPasswors";
-import EditUserForm from "./components/EditUserForm";
+import LoginPage from "./components/user/Login";
+import SignUpForm from "./components/user/SignUpForm";
+import PasswordResetRequest from "./components/resetPassword/RequestPasswordReset";
+import PasswordReset from "./components/resetPassword/ResetPasswors";
+import EditUserForm from "./components/user/EditUserForm";
 import DynamicPage from "./components/DynamicPage";
-import UserProfile from "./components/UserProfile";
+import UserProfile from "./components/user/UserProfile";
 import "./App.css";
 import HomePage from "./components/HomePage";
 import theme from "./style/theme";
 import { ThemeProvider } from "@emotion/react";
-import { AllUsersPage } from "./components/AllUsersPage";
-import AdminPage from "./components/AdminPage";
+import { AllUsersPage } from "./components/admin/AllUsersPage";
+import AdminPage from "./components/admin/AdminPage";
 const queryClient = new QueryClient();
 
 export const countryState = atom<CountryData | null>({

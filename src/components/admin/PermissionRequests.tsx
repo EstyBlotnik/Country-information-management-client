@@ -1,7 +1,10 @@
 import { useRecoilState } from "recoil";
-import { permissionRequestsState } from "../states/permissionRequestsState";
+import { permissionRequestsState } from "../../states/permissionRequestsState";
 import { useEffect, useState } from "react";
-import { fetchPermissionRequestsFromServer } from "../services/userService";
+import {
+  changeRoleResponse,
+  fetchPermissionRequestsFromServer,
+} from "../../services/userService";
 import PermissionRequestCard from "./ReqestCard";
 
 const PermissionRequests = () => {
@@ -37,6 +40,16 @@ const PermissionRequests = () => {
     );
   }, [permissionRequests]);
 
+  const onDeny = async (reqId: string) => {
+    changeRoleResponse(reqId, false);
+    console.log("deny request");
+  };
+  
+  const onApprove = async (reqId: string) => {
+    changeRoleResponse(reqId, true);
+    console.log("approve request");
+  };
+
   if (loading) return <p>Loading...</p>;
 
   return (
@@ -45,12 +58,8 @@ const PermissionRequests = () => {
         permissionRequests.map((request) => (
           <PermissionRequestCard
             request={request}
-            onApprove={(userId: string) => {
-              console.log(userId);
-            }}
-            onDeny={(userId: string) => {
-              console.log(userId);
-            }}
+            onApprove={onApprove}
+            onDeny={onDeny}
           />
         ))}
     </div>

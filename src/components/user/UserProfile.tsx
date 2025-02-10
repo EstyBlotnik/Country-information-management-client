@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import API_URL from "../config/apiConfig";
+import API_URL from "../../config/apiConfig";
 
 import {
   Card,
@@ -11,7 +11,7 @@ import {
   Button,
 } from "@mui/material";
 
-import { useUser } from "../hooks/useUser";
+import { useUser } from "../../hooks/useUser";
 import { useNavigate } from "react-router-dom";
 import RoleDialog from "./RoleDialog";
 
