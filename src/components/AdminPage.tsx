@@ -5,7 +5,7 @@ import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { useDemoRouter } from "@toolpad/core/internal";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import { AllUsersPage } from "./AllUsersPage";
-import { AllReqests } from "./AllReqests";
+import PermissionRequests from "./PermissionRequests";
 
 const NAVIGATION: Navigation = [
   {
@@ -56,7 +56,7 @@ export default function AdminPage(props: DemoProps) {
     >
       <DashboardLayout disableCollapsibleSidebar>
         {router.pathname === "/allUsers" && <AllUsersPage />}
-        {router.pathname === "/permissionRequests" && <AllReqests />}
+        {router.pathname === "/permissionRequests" && <PermissionRequests />}
       </DashboardLayout>
     </AppProvider>
   );

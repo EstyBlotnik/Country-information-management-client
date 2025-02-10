@@ -11,7 +11,6 @@ const PermissionRequests = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // אם אין מידע ב-Recoil או ב-localStorage, נשלוף מהשרת
     const fetchData = async () => {
       const requestsFromStorage = JSON.parse(
         localStorage.getItem("permissionRequests") || "[]"
@@ -32,7 +31,6 @@ const PermissionRequests = () => {
   }, [setPermissionRequests]);
 
   useEffect(() => {
-    // כל פעם שהמידע משתנה, נשמור אותו ב-localStorage
     localStorage.setItem(
       "permissionRequests",
       JSON.stringify(permissionRequests)
