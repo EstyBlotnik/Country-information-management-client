@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { TextField, Button, Grid, Box, Avatar } from "@mui/material";
 import { Formik, Field, Form, ErrorMessage, FieldProps } from "formik";
 import * as Yup from "yup";
@@ -6,8 +6,9 @@ import { useUser } from "../../hooks/useUser";
 import { useUsers } from "../../hooks/useUsers";
 import "../../style/signupForm.scss";
 import API_URL from "../../config/apiConfig";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
-import { userData } from "../../types/userTypes";
+import { useNavigate } from "react-router-dom";
+import { isEditingState, selctedUserState } from "../../states/user";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 
 const validationSchema = Yup.object({
   firstName: Yup.string()
@@ -36,21 +37,11 @@ const validationSchema = Yup.object({
 
 const EditUserForm = ({ editFor }: { editFor: "mySelf" | "anOtherUser" }) => {
   const { user, updateUser } = useUser();
-  const { updateSelectedUser, getUserById } = useUsers();
-  const [selectedUser, setSelectedUser] = useState<userData | null>(null);
+  const { updateSelectedUser } = useUsers();
   const navigate = useNavigate();
+  const selectedUser = useRecoilValue(selctedUserState);
+  const setIsEditingState = useSetRecoilState(isEditingState);
 
-  const { id } = useParams<{ id: string }>();
-  useEffect(() => {
-    if (id) {
-      const fetchedUser = getUserById(id);
-      if (fetchedUser) {
-        setSelectedUser(fetchedUser);
-      }
-      console.log("fetchedUser", fetchedUser);
-    }
-    console.log("user:", selectedUser);
-  }, [id, getUserById]);
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     setFieldValue: any
@@ -83,7 +74,14 @@ const EditUserForm = ({ editFor }: { editFor: "mySelf" | "anOtherUser" }) => {
           userId: selectedUser._id,
           updatedData: formData as any,
         });
-      navigate("/allusers");
+      setIsEditingState(false);
+    }
+  };
+  const handleCancel = () => {
+    if (editFor === "mySelf") {
+      navigate("/profile");
+    } else {
+      setIsEditingState(false);
     }
   };
   if (!user) {
@@ -243,17 +241,33 @@ const EditUserForm = ({ editFor }: { editFor: "mySelf" | "anOtherUser" }) => {
                 </Field>
               </Grid>
             </Grid>
-
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              disabled={isSubmitting}
-              className="landing-page__button"
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: "10px",
+                paddingTop: "4px",
+              }}
             >
-              Save changes
-            </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={isSubmitting}
+                className="landing-page__button"
+              >
+                Save changes
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                disabled={isSubmitting}
+                onClick={handleCancel}
+                className="landing-page__button"
+              >
+                Cancel
+              </Button>
+            </div>
           </Box>
         </Form>
       )}

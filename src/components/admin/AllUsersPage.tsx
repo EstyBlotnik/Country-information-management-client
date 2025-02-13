@@ -1,8 +1,6 @@
 import { FaSpinner } from "react-icons/fa";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { FaPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
 import "../../style/Country.scss";
 import { useMemo } from "react";
@@ -10,16 +8,15 @@ import VerificationDialog from "../countries/VerificationDialogue";
 import { useUsers } from "../../hooks/useUsers";
 import { Avatar } from "@mui/material";
 import { userData } from "../../types/userTypes";
-import API_URL from "../../config/apiConfig"; 
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { selctedUserState } from "../../states/user";
+import API_URL from "../../config/apiConfig";
+import { useSetRecoilState } from "recoil";
+import { isEditingState, selctedUserState } from "../../states/user";
 export const AllUsersPage = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [userId, setUserId] = useState<string>("");
-  const navigate = useNavigate();
   const { users, isLoading, error, deleteMutation, getUserById } = useUsers();
   const setSelectedUser = useSetRecoilState(selctedUserState);
-  const selectedUser = useRecoilValue(selctedUserState);
+  const setIsEditingState = useSetRecoilState(isEditingState);
   useEffect(() => {
     if (deleteMutation.isSuccess) {
       toast.success("User deleted successfully");
@@ -51,9 +48,7 @@ export const AllUsersPage = () => {
         width: 150,
         renderCell: (params) => (
           <Avatar
-            src={
-              `${API_URL}${params.value}` || "/default-avatar.png"
-            }
+            src={`${API_URL}${params.value}` || "/default-avatar.png"}
             alt="user profle"
             sx={{ width: 50, height: 50, mb: 2 }}
           />
@@ -91,10 +86,10 @@ export const AllUsersPage = () => {
 
   const handleEdit = (selectedUser: userData) => {
     console.log(selectedUser);
-    const fullSelectedUser = getUserById(selectedUser?._id||"")
-    setSelectedUser(fullSelectedUser||selectedUser);
+    const fullSelectedUser = getUserById(selectedUser?._id || "");
+    setSelectedUser(fullSelectedUser || selectedUser);
     console.log("selected user set to state", selectedUser);
-    navigate(`/editUser/${selectedUser._id}`);
+    setIsEditingState(true);
   };
 
   const handleDeleteConfirmation = (id: string) => {
@@ -105,7 +100,7 @@ export const AllUsersPage = () => {
   const handleDelete = (id: string) => {
     console.log("Deleting user with id:", id);
     setDeleteDialogOpen(false);
-    deleteMutation.mutate(id); // שולח את ה-id למחיקה
+    deleteMutation.mutate(id); 
   };
 
   const handleCancel = () => {
@@ -131,13 +126,6 @@ export const AllUsersPage = () => {
         }}
         pageSizeOptions={[10, 20, 25]}
       />
-      <button
-        className="add-country-button"
-        onClick={() => navigate("/addUser")}
-      >
-        <FaPlus style={{ marginRight: "8px" }} />
-        Add a user
-      </button>
       <VerificationDialog
         dialogFor="delete"
         open={deleteDialogOpen}

@@ -4,10 +4,9 @@ import { useUser } from "../useUser";
 
 const useAdminAuth = () => {
   const navigate = useNavigate();
-  const { user, isLoading } = useUser(); // קבלת נתוני המשתמש מ-useUser
-
+  const { user, isLoading } = useUser();
   useEffect(() => {
-    if (!isLoading && (!user || !(user.role==="Admin"))) {
+    if (!isLoading && (!user || !(user.role === "Admin"))) {
       navigate("/home");
     }
   }, [user, isLoading, navigate]);

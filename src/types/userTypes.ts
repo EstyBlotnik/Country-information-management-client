@@ -1,3 +1,5 @@
+import { RequestData } from "./authorizationRequest";
+
 export type userData = {
   _id?: string;
   firstName: string;
@@ -9,6 +11,8 @@ export type userData = {
   userName: string;
   password?: string;
   JoiningDate: Date;
+  closedRequests: RequestData[];
+  openRequest?: RequestData;
 };
 
 export interface UserResponse {

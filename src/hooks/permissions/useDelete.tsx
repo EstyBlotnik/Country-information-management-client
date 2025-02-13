@@ -7,7 +7,7 @@ const useDeleteAuth = () => {
   const { user, isLoading } = useUser();
 
   useEffect(() => {
-    if (!isLoading && (!user || !["Admin", "Add", "Edit", "Delete"].includes(user.role))) {
+    if (!isLoading && (!user || !["Admin", "Delete"].includes(user.role))) {
       navigate("/home");
     }
   }, [user, isLoading, navigate]);

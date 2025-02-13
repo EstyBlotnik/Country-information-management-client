@@ -16,14 +16,14 @@ import { countryState } from "../App";
 import { useUser } from "../hooks/useUser";
 import { useNavigate } from "react-router-dom";
 import UserDialog from "./user/UserDialog";
-import API_URL from "../config/apiConfig"; 
+import API_URL from "../config/apiConfig";
 
 const link = document.createElement("link");
 link.href =
   "https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap";
 
-const pages = ["About", "Contact"];
-const userPages = ["Countries", "Cities", "settings"];
+const pages = ["Countries", "Cities"];
+const userPages = ["All requests"];
 const adminPages = ["adminPage"];
 const settings = ["Login", "Register"];
 const userSettings = ["Profile", "Logout"];
@@ -91,7 +91,7 @@ export default function NavBar() {
               variant="h6"
               noWrap
               component="a"
-              href={user?"/home":"/"}
+              href={user ? "/home" : "/"}
               sx={{
                 mr: 2,
                 // flexGrow: 0.2,
@@ -133,18 +133,22 @@ export default function NavBar() {
                 onClose={handleCloseNavMenu}
                 sx={{ display: { xs: "block", md: "none" } }}
               >
-                {pages.map((page) => (
-                  <MenuItem
-                    key={page}
-                    onClick={() => {
-                      handleCloseNavMenu;
-                      handlePageClick(page);
-                    }}
-                  >
-                    <Typography sx={{ textAlign: "center" }}>{page}</Typography>
-                  </MenuItem>
-                ))}
                 {user &&
+                  pages.map((page) => (
+                    <MenuItem
+                      key={page}
+                      onClick={() => {
+                        handleCloseNavMenu;
+                        handlePageClick(page);
+                      }}
+                    >
+                      <Typography sx={{ textAlign: "center" }}>
+                        {page}
+                      </Typography>
+                    </MenuItem>
+                  ))}
+                {user &&
+                  user.role !== "Admin" &&
                   userPages.map((page) => (
                     <MenuItem
                       key={page}
@@ -194,19 +198,21 @@ export default function NavBar() {
               {country ? country.name : "Countries managment"}
             </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-              {pages.map((page) => (
-                <Button
-                  key={page}
-                  onClick={() => {
-                    handleCloseNavMenu;
-                    handlePageClick(page);
-                  }}
-                  sx={{ my: 2, color: "white", display: "block" }}
-                >
-                  {page}
-                </Button>
-              ))}
               {user &&
+                pages.map((page) => (
+                  <Button
+                    key={page}
+                    onClick={() => {
+                      handleCloseNavMenu;
+                      handlePageClick(page);
+                    }}
+                    sx={{ my: 2, color: "white", display: "block" }}
+                  >
+                    {page}
+                  </Button>
+                ))}
+              {user &&
+                user.role !== "Admin" &&
                 userPages.map((page) => (
                   <Button
                     key={page}
@@ -236,16 +242,28 @@ export default function NavBar() {
             </Box>
             <Box>
               <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar
-                    alt="Remy Sharp"
-                    src={
-                      `${API_URL}${user?.profilePicture}` ||
-                      "/default-avatar.png"
-                    }
-                    sx={{ width: 50, height: 50 }}
-                  />
-                </IconButton>
+                <div>
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar
+                      alt="Remy Sharp"
+                      src={
+                        `${API_URL}${user?.profilePicture}` ||
+                        "/default-avatar.png"
+                      }
+                      sx={{ width: 45, height: 45 }}
+                    />
+                  </IconButton>
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "white",
+                      textAlign: "center",
+                      marginTop: "0px",
+                    }}
+                  >
+                    {user?.userName}
+                  </div>
+                </div>
               </Tooltip>
               <Menu
                 sx={{ mt: "45px" }}

@@ -57,7 +57,7 @@ export const useCountries = () => {
       console.log("Cache updated after country update");
     },
     onError: (error) => {
-      toast.error("Error updating the country");
+      toast.error(`Error updating the country: ${error.message}`);
       console.error("Error deleting country:", error);
     },
   });
@@ -76,7 +76,7 @@ export const useCountries = () => {
     },
     onError: (error) => {
       console.error("Error adding country:", error);
-      toast.error("Error adding the country");
+      toast.error(`Error adding the country: ${error.message}`);
     },
   });
 

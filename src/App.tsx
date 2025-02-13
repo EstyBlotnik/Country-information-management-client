@@ -23,6 +23,9 @@ import theme from "./style/theme";
 import { ThemeProvider } from "@emotion/react";
 import { AllUsersPage } from "./components/admin/AllUsersPage";
 import AdminPage from "./components/admin/AdminPage";
+import { ViewCountry } from "./components/countries/ViewCountry";
+import { Cities } from "./components/cities/Cities";
+import { UserAllRequests } from "./components/user/UserAllRequests";
 const queryClient = new QueryClient();
 
 export const countryState = atom<CountryData | null>({
@@ -42,17 +45,9 @@ export default function App() {
                 <NavBar />
                 <div className="body">
                   <Routes>
-                    {/* <Route path="/allusers">
-                  element=
-                  {
-                    <AdminRoute
-                      children={<AllUsersPage />}
-                      path={"/allusers"}
-                    />
-                  }
-                </Route> */}
                     <Route path="/" element={<LandingPage />} />
                     <Route path={"/countries"} element={<Country />} />
+                    <Route path={"/cities"} element={<Cities />} />
                     <Route path={"/register"} element={<SignUpForm />} />
                     <Route path={"/login"} element={<LoginPage />} />
                     <Route path={"/home"} element={<HomePage />} />
@@ -68,6 +63,7 @@ export default function App() {
                       path={"/editCountry/:id"}
                       element={<ValidationCountryData />}
                     />
+                    <Route path="/veiwCountry/:id" element={<ViewCountry />} />
                     <Route
                       path={"/addCountry"}
                       element={<ValidationCountryData />}
@@ -84,6 +80,7 @@ export default function App() {
                     <Route path="allusers" element={<AllUsersPage />} />
                     <Route path="adminPage" element={<AdminPage />} />
                     <Route path="/:setting" element={<DynamicPage />} />
+                    <Route path="/all requests" element={<UserAllRequests/> } />
                   </Routes>
                 </div>
               </ThemeProvider>

@@ -1,11 +1,11 @@
 import { useParams } from "react-router-dom";
 
 function DynamicPage() {
-  const { setting } = useParams(); // מקבל את הפרמטר מהכתובת
+  const { setting } = useParams(); 
 
   return (
     <div>
-      <h1>עמוד {setting}</h1>
+      <h1>page {setting}</h1>
     </div>
   );
 }

@@ -1,10 +1,9 @@
 import React from "react";
-import { TextField, Button, Grid, Box, Typography } from "@mui/material";
+import { TextField, Button, Grid, Box } from "@mui/material";
 import { Formik, Field, Form, ErrorMessage, FieldProps } from "formik";
 import * as Yup from "yup";
-import { useUser } from "../../hooks/useUser";
+import { useUsers } from "../../hooks/useUsers";
 import "../../style/signupForm.scss";
-import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 
 const validationSchema = Yup.object({
   firstName: Yup.string()
@@ -51,8 +50,8 @@ const validationSchema = Yup.object({
   profilePicture: Yup.mixed().nullable(),
 });
 
-const SignupForm = () => {
-  const { registerUser } = useUser();
+const AddUserForm = () => {
+  const { addUser } = useUsers();
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     setFieldValue: any
@@ -79,7 +78,7 @@ const SignupForm = () => {
       console.log(pair[0], pair[1]);
     }
     console.log("formData: " + formData);
-    registerUser(formData as any);
+    addUser(formData as any);
   };
 
   return (
@@ -107,9 +106,9 @@ const SignupForm = () => {
           }}
         >
           <Box className="landing-page__box">
-            <h2 className="landing-page__title">Sign Up</h2>
+            <h2 className="landing-page__title">Add a new user</h2>
             <p className="landing-page__description">
-              Please fill in your details to create an account
+              Please fill in all new user details:
             </p>
 
             <Grid container spacing={2}>
@@ -218,26 +217,13 @@ const SignupForm = () => {
                   )}
                 </Field>
               </Grid>
+
               <Grid item xs={12}>
-                <Button
-                  component="label"
-                  variant="contained"
-                  color="primary"
-                  startIcon={<PhotoCameraIcon />}
-                  style={{
-                    padding: "10px",
-                    margin: "10px",
-                    textAlign: "center",
-                  }}
-                >
-                  upload profil image
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleFileChange(e, setFieldValue)}
-                    hidden
-                  />
-                </Button>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleFileChange(e, setFieldValue)}
+                />
                 <ErrorMessage
                   name="profilePicture"
                   component="div"
@@ -254,7 +240,7 @@ const SignupForm = () => {
               disabled={isSubmitting}
               className="landing-page__button"
             >
-              Sign Up
+              Create new user
             </Button>
           </Box>
         </Form>
@@ -263,4 +249,4 @@ const SignupForm = () => {
   );
 };
 
-export default SignupForm;
+export default AddUserForm;

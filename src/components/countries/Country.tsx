@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import "../../style/Country.scss";
 import { useMemo } from "react";
 import VerificationDialog from "./VerificationDialogue";
+import { useUser } from "../../hooks/useUser";
 export const Country = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [countryId, setCountryId] = useState<string>("");
@@ -18,7 +19,7 @@ export const Country = () => {
   const setCountry = useSetRecoilState(countryState);
   const country = useRecoilValue(countryState);
   const navigate = useNavigate();
-
+  const { user } = useUser();
   const { countries, isLoading, error, deleteMutation } = useCountries();
   useEffect(() => {
     if (deleteMutation.isSuccess) {
@@ -46,12 +47,12 @@ export const Country = () => {
   const columns: GridColDef[] = useMemo(
     () => [
       { field: "name", headerName: "name", width: 150 },
-      { field: "region", headerName: "region", width: 150 },
-      { field: "population", headerName: "population", width: 150 },
+      { field: "region", headerName: "region", width: 130 },
+      { field: "population", headerName: "population", width: 130 },
       {
         field: "flag",
         headerName: "flag",
-        width: 150,
+        width: 120,
         renderCell: (params) => (
           <img
             src={params.value}
@@ -63,26 +64,36 @@ export const Country = () => {
       {
         field: "actions",
         headerName: "Actions",
-        width: 200,
+        width: 270,
         renderCell: (params) => (
           <div>
+            {user && ["Admin", "Delete", "Edit"].includes(user.role) && (
+              <button
+                className="button button-edit"
+                onClick={() => handleEdit(params.row)}
+              >
+                Edit
+              </button>
+            )}
+            {user && (user.role === "Admin" || user?.role === "Delete") && (
+              <button
+                className="button button-delete"
+                onClick={() => handleDeleteConfirmation(params.row.id)}
+              >
+                Delete
+              </button>
+            )}
             <button
-              className="button button-edit"
-              onClick={() => handleEdit(params.row)}
+              className="button button-detail"
+              onClick={() => handleDetails(params.row)}
             >
-              Edit
-            </button>
-            <button
-              className="button button-delete"
-              onClick={() => handleDeleteConfirmation(params.row.id)}
-            >
-              Delete
+              More
             </button>
           </div>
         ),
       },
     ],
-    []
+    [user]
   );
 
   const handleEdit = (selectedCountry: CountryData) => {
@@ -91,6 +102,11 @@ export const Country = () => {
     console.log("selectedCountry set to state", selectedCountry);
     navigate(`/editCountry/${selectedCountry._id}`);
     console.log(country);
+  };
+
+  const handleDetails = (selectedCountry: CountryData) => {
+    setCountry(selectedCountry);
+    navigate(`/veiwCountry/${selectedCountry._id}`);
   };
 
   const handleDeleteConfirmation = (id: string) => {
@@ -127,13 +143,15 @@ export const Country = () => {
         }}
         pageSizeOptions={[10, 20, 25]}
       />
-      <button
-        className="add-country-button"
-        onClick={() => navigate("/addCountry")}
-      >
-        <FaPlus style={{ marginRight: "8px" }} />
-        Add a country
-      </button>
+      {user && ["Edit", "Delete", "Add", "Admin"].includes(user.role) && (
+        <button
+          className="add-country-button"
+          onClick={() => navigate("/addCountry")}
+        >
+          <FaPlus style={{ marginRight: "8px" }} />
+          Add a country
+        </button>
+      )}
       <VerificationDialog
         dialogFor="delete"
         open={deleteDialogOpen}

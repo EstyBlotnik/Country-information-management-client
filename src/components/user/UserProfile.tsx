@@ -57,12 +57,12 @@ const UserProfile = () => {
     setOpenDialog(false);
   };
   return (
-    <>
+    <div>
       <Card
         sx={{
           maxWidth: 500,
           margin: "auto",
-          mt: 4,
+          mt: 10,
           p: 3,
           textAlign: "left",
           boxShadow: 3,
@@ -115,7 +115,7 @@ const UserProfile = () => {
         </CardContent>
       </Card>
       <RoleDialog user={user} isOpen={openDialog} onClose={handleCloseDialog} />
-    </>
+    </div>
   );
 };
 

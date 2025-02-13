@@ -4,8 +4,8 @@
   text-align: center;
 }
 .App {
-  margin-top: 80px;
-  width: 100vw;
+  margin-top: 200px;
+  margin: 0;
 }
 .MuiAppBar-root {
   display: none;

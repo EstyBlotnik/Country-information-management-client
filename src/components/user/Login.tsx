@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import { useUser } from '../../hooks/useUser';
-import '../../style/LoginPage.scss';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { useUser } from "../../hooks/useUser";
+import "../../style/LoginPage.scss";
+import { Link } from "react-router-dom";
 
 const LoginPage = () => {
   const { loginUser, loginMutation } = useUser();
-  const [userName, setUserName] = useState('');
-  const [password, setPassword] = useState('');
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     loginUser({ userName, password });
   };
 
-  const isLoading = loginMutation.status === 'pending';
+  const isLoading = loginMutation.status === "pending";
 
   return (
     <div className="landing-page">
@@ -29,8 +29,8 @@ const LoginPage = () => {
               type="text"
               id="username"
               name="username"
-              value={userName}  // קשר עם הסטייט
-              onChange={(e) => setUserName(e.target.value)}  // עדכון הערך של הסטייט
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
               required
             />
           </div>
@@ -40,8 +40,8 @@ const LoginPage = () => {
               type="password"
               id="password"
               name="password"
-              value={password}  // קשר עם הסטייט
-              onChange={(e) => setPassword(e.target.value)}  // עדכון הערך של הסטייט
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
@@ -50,7 +50,7 @@ const LoginPage = () => {
             type="submit"
             disabled={isLoading} // Disable the button while loading
           >
-            {isLoading ? 'Logging In...' : 'Sign In'}
+            {isLoading ? "Logging In..." : "Sign In"}
           </button>
         </form>
         <div className="landing-page__forgot-password">

@@ -12,6 +12,7 @@ import {
 import { RequestData } from "../../types/authorizationRequest";
 import { useUsers } from "../../hooks/useUsers";
 import API_URL from "../../config/apiConfig";
+import { useUser } from "../../hooks/useUser";
 
 interface PermissionRequestProps {
   request: RequestData;
@@ -26,7 +27,8 @@ const PermissionRequestCard: React.FC<PermissionRequestProps> = ({
 }) => {
   const { requestDate, userId, requestedRole, status } = request;
   const { getUserById } = useUsers();
-  const user = getUserById(userId);
+  const { user } = useUser();
+  const reqUser = getUserById(userId);
 
   return (
     <Card
@@ -37,7 +39,7 @@ const PermissionRequestCard: React.FC<PermissionRequestProps> = ({
         boxShadow: 3,
         backgroundColor: "#fafafa",
         display: "flex",
-        flexDirection: "row", // השתמשנו ב-flexbox כדי למקם את התמונה מצד אחד
+        flexDirection: "row",
         alignItems: "center",
       }}
     >
@@ -59,7 +61,7 @@ const PermissionRequestCard: React.FC<PermissionRequestProps> = ({
             sx={{ marginBottom: 1 }}
           >
             <strong>Requested by:</strong>{" "}
-            {user?.firstName + " " + user?.lastName}
+            {reqUser?.firstName + " " + reqUser?.lastName}
           </Typography>
           <Typography
             variant="body2"
@@ -88,7 +90,7 @@ const PermissionRequestCard: React.FC<PermissionRequestProps> = ({
           </Typography>
         </CardContent>
         <Divider />
-        {request.status === "Pending" && (
+        {request.status === "Pending" && user && user.role === "Admin" && (
           <CardActions sx={{ padding: 1 }}>
             <Button
               variant="contained"
@@ -111,10 +113,10 @@ const PermissionRequestCard: React.FC<PermissionRequestProps> = ({
       </Box>
       <Box sx={{ padding: 2 }}>
         <Avatar
-          alt={`${user?.firstName} ${user?.lastName}`}
+          alt={`${reqUser?.firstName} ${reqUser?.lastName}`}
           src={
-            user
-              ? `${API_URL}${user?.profilePicture}` || "/default-avatar.png"
+            reqUser
+              ? `${API_URL}${reqUser?.profilePicture}` || "/default-avatar.png"
               : "/default-avatar.png"
           }
           sx={{ width: 56, height: 56 }}

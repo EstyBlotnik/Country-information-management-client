@@ -7,7 +7,7 @@ const useEditAuth = () => {
   const { user, isLoading } = useUser();
 
   useEffect(() => {
-    if (!isLoading && (!user || !["Admin", "Edit"].includes(user.role))) {
+    if (!isLoading && (!user || !["Admin", "Edit", "Delete"].includes(user.role))) {
       navigate("/home");
     }
   }, [user, isLoading, navigate]);

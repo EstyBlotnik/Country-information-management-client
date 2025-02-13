@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 export const useUser = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  // Fetch the currently logged-in user
   const {
     data: user,
     isLoading,
@@ -39,7 +38,7 @@ export const useUser = () => {
       }
     },
     enabled: true,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 15,
   });
   // Register a new user
   const registerMutation = useMutation<userData, Error, userData>({
@@ -100,7 +99,7 @@ export const useUser = () => {
     },
     onError: (error) => {
       console.error("Error logging in user:", error);
-      toast.error("Error logging in the user");
+      toast.error(`Error logging in the user: ${error.message}`);
     },
   });
 
@@ -120,7 +119,7 @@ export const useUser = () => {
     },
     onError: (error) => {
       console.error("Error logging out user:", error);
-      toast.error("Error logging out the user");
+      toast.error(`Error logging out the user: ${error.message}`);
     },
   });
 
@@ -153,7 +152,7 @@ export const useUser = () => {
       console.log("Cache updated after user update");
     },
     onError: (error) => {
-      toast.error("Error updating the user");
+      toast.error(`Error updating the user: ${error.message}`);
       console.error("Error updating user:", error);
     },
   });

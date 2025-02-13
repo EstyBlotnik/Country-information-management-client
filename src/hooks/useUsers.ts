@@ -1,11 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { CountryData, CountryWithoutID } from "../types/countryTypes";
 import { toast } from "react-toastify";
 import {
   getAllUsers,
   editUser,
-  getUser,
   deleteUser,
+  addUser,
 } from "../services/userService";
 import { userData } from "../types/userTypes";
 
@@ -31,7 +30,9 @@ export const useUsers = () => {
 
   // Delete a user
   const deleteMutation = useMutation<void, Error, string>({
-    mutationFn: (userId) => deleteUser(userId),
+    mutationFn: async (userId) => {
+      deleteUser(userId);
+    },
     onSuccess: (_, id) => {
       // Update cache after deletion
       queryClient.setQueryData<userData[]>(
@@ -40,7 +41,7 @@ export const useUsers = () => {
       );
     },
     onError: (error) => {
-      console.error("Error deleting country:", error);
+      console.error("Error deleting user:", error);
     },
   });
 
@@ -62,7 +63,7 @@ export const useUsers = () => {
     },
     onSuccess: (updatedUser, { userId, updatedData }) => {
       // Update cache after update
-      queryClient.setQueryData<CountryData[]>(
+      queryClient.setQueryData<userData[]>(
         ["users"],
         (oldData) =>
           oldData?.map((user) =>
@@ -73,30 +74,36 @@ export const useUsers = () => {
       console.log("Cache updated after users update");
     },
     onError: (error) => {
-      toast.error("Error updating the user");
+      toast.error(`Error updating the user: ${error.message}`);
       console.error("Error deleting user:", error);
     },
   });
 
-//   // Add a new country
-//   const addMutation = useMutation<CountryData, Error, CountryWithoutID>({
-//     mutationFn: (newCountry) => addCountry(newCountry),
-//     onSuccess: (newCountry) => {
-//       // Update cache after adding a new country
-//       queryClient.setQueryData<CountryData[]>(["country"], (oldData) => [
-//         ...(oldData || []),
-//         newCountry,
-//       ]);
-//       toast.success("Country added successfully");
-//       console.log("Cache updated after adding new country");
-//     },
-//     onError: (error) => {
-//       console.error("Error adding country:", error);
-//       toast.error("Error adding the country");
-//     },
-//   });
+  // Add a new user
+  const addMutation = useMutation<userData, Error, userData>({
+    mutationFn: async (newUser) => {
+      const response = await addUser(newUser);
+      if (response && "data" in response) {
+        return response.data as userData;
+      } else {
+        throw new Error(response.message);
+      }
+    },
+    onSuccess: (newUser) => {
+      queryClient.setQueryData<userData[]>(["users"], (oldData) => [
+        ...(oldData || []),
+        newUser,
+      ]);
+      toast.success("User added successfully");
+      console.log("Cache updated after adding new user");
+    },
+    onError: (error) => {
+      console.error("Error adding user:", error);
+      toast.error(`Error adding the user: ${error.message}`);
+    },
+  });
 
-  // Get a specific country by its ID from the cache
+  // Get a specific user by its ID from the cache
   const getUserById = (id: string): userData | undefined => {
     return queryClient
       .getQueryData<userData[]>(["users"])
@@ -111,8 +118,8 @@ export const useUsers = () => {
     deleteMutation,
     updateSelectedUser: updateMutation.mutate,
     updateMutation,
-    // addCountry: addMutation.mutate,
-    // addMutation,
+    addUser: addMutation.mutate,
+    addMutation,
     getUserById,
   };
 };

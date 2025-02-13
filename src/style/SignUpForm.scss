@@ -1,13 +1,13 @@
-/* LandingPage.scss */
 body,
 html {
   margin: 0;
   padding: 0;
-  height: 100%; /* ודא שהגובה מכסה את כל הדף */
-  background-color: #fff6e3; /* צבע הרקע */
+  height: 100%; 
+  background-color: #fff6e3; 
 }
 
 .landing-page {
+  margin-top: 20px;
   display: flex;
   justify-content: center;
   align-items: center;

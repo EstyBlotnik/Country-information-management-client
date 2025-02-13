@@ -19,10 +19,11 @@ const LandingPage = () => {
       <Container className="landing-page__container">
         <Box className="landing-page__header">
           <Typography className="landing-page__title" variant="h3">
-            ברוכים הבאים לעמוד המדינות שלנו
+            Welcome to our countries page{" "}
           </Typography>
           <Typography className="landing-page__description" variant="body1">
-            כאן תוכל לקבל מידע על כל המדינות וערי הבירה שלהם.
+            Here you can get information about all the countries and their
+            capitals.
           </Typography>
         </Box>
 
@@ -31,14 +32,14 @@ const LandingPage = () => {
             className="landing-page__button landing-page__button--register"
             onClick={handleRegister}
           >
-            הרשמה
+            Sign up
           </Button>
 
           <Button
             className="landing-page__button landing-page__button--login"
             onClick={handleLogin}
           >
-            התחברות
+            Sign in
           </Button>
         </Box>
       </Container>

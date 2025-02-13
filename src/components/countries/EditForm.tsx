@@ -1,4 +1,4 @@
-import { Formik, Form, Field, FieldProps } from "formik";
+import { Formik, Form, Field, FieldProps, FieldArray } from "formik";
 import { useEffect, useState } from "react";
 import * as Yup from "yup";
 import TextField from "@mui/material/TextField";
@@ -7,8 +7,11 @@ import { useNavigate } from "react-router-dom";
 import { useCountries } from "../../hooks/useCountries";
 import "../../style/editFile.scss";
 import { useParams } from "react-router-dom";
-import { CountryData } from "../../types/countryTypes";
+import { CityData, CountryData } from "../../types/countryTypes";
 import VerificationDialog from "./VerificationDialogue";
+import { useUser } from "../../hooks/useUser";
+import { useCities } from "../../hooks/useCities";
+import CityInputDialog from "./CityInputDialog";
 
 const CountryScema = Yup.object().shape({
   name: Yup.string()
@@ -23,7 +26,7 @@ const CountryScema = Yup.object().shape({
     .max(50, "Too Long!")
     .matches(/^https:\/\//, "must start with 'https://'")
     .test("no-noSQL", "Invalid Name", (value) => {
-      return value?!/[{}$]/.test(value):true;
+      return value ? !/[{}$]/.test(value) : true;
     }),
   population: Yup.number()
     .positive("Population must be positive")
@@ -40,10 +43,15 @@ const CountryScema = Yup.object().shape({
 
 export const ValidationCountryData = () => {
   const { updateCountry, getCountryById, addCountry } = useCountries();
+  // const { addCityToCountry, updateCityInCountry, deleteCityFromCountry } = useCountries();
+  const { addCity, deleteCity, updateCity } = useCities();
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [country, setCountry] = useState<CountryData | null>(null);
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const { user, isLoading } = useUser();
+  const [openDialog, setOpenDialog] = useState(false);
+
   useEffect(() => {
     if (id) {
       const fetchedCountry = getCountryById(id);
@@ -53,6 +61,75 @@ export const ValidationCountryData = () => {
     }
     console.log("country:", country);
   }, [id, getCountryById, navigate]);
+
+  useEffect(() => {
+    if (!country) {
+      if (
+        !isLoading &&
+        (!user || !["Admin", "Delete", "Add", "Edit"].includes(user.role))
+      ) {
+        navigate("/countries");
+      }
+    } else {
+      if (
+        !isLoading &&
+        (!user || !["Admin", "Delete", "Edit"].includes(user.role))
+      ) {
+        navigate("/countries");
+      }
+    }
+  }, [user, isLoading, navigate, country]);
+
+  const handleAddCity = async (cityName: string) => {
+    if (!country) return;
+    try {
+      addCity({ name: cityName, countryId: country._id });
+      setCountry((prev) => ({
+        ...prev!,
+        cities: [...prev!.cities, { name: cityName }],
+      }));
+    } catch (error) {
+      console.error("Error adding city:", error);
+    }
+  };
+
+  const handleDeleteCity = async (cityId: string) => {
+    if (!country) return;
+    try {
+      deleteCity({ cityId, countryId: country._id });
+      setCountry((prev) => ({
+        ...prev!,
+        cities: prev!.cities.filter((city) => city._id !== cityId),
+      }));
+    } catch (error) {
+      console.error("Error deleting city:", error);
+    }
+  };
+
+  const handleUpdateCity = async (updatedData: CityData) => {
+    if (!country) return;
+    try {
+      updateCity({
+        countryId: country._id,
+        cityId: updatedData?._id || "",
+        updatedData,
+      });
+      setCountry((prev) => {
+        const updatedCities = [...prev!.cities];
+        const cityIndex = updatedCities.findIndex(
+          (city) => city._id === updatedData._id
+        );
+
+        if (cityIndex !== -1) {
+          updatedCities[cityIndex].name = updatedData.name;
+        }
+
+        return { ...prev!, cities: updatedCities };
+      });
+    } catch (error) {
+      console.error("Error updating city:", error);
+    }
+  };
 
   const handleCancelEdit = (): void => {
     console.log("Cancel edit action triggered.");
@@ -79,25 +156,25 @@ export const ValidationCountryData = () => {
           if (country) {
             updateCountry({
               countryId,
-              updatedData: { ...values, _id: countryId },
+              updatedData: { ...values, cities: [], _id: countryId },
             });
           } else {
-            addCountry(values);
+            addCountry({ ...values, cities: [] });
           }
 
-          console.log("submitted: ", values);
-          navigate("/home");
+          console.log("submitted: ", { ...values, cities: [] });
+          navigate("/countries");
         }}
       >
-        {({ errors, touched, dirty, isValid }) => (
+        {({ values, errors, touched, dirty, isValid }) => (
           <Form>
             <Field name="name">
               {({ field, meta }: FieldProps) => (
                 <TextField
                   {...field}
                   label="Country Name"
-                  error={meta.touched && Boolean(meta.error)} // הצגת שגיאה אם יש
-                  helperText={meta.touched && meta.error} // טקסט עזר לשגיאה
+                  error={meta.touched && Boolean(meta.error)}
+                  helperText={meta.touched && meta.error}
                 />
               )}
             </Field>
@@ -142,6 +219,36 @@ export const ValidationCountryData = () => {
             {errors.region && touched.region ? (
               <div>{errors.region}</div>
             ) : null}
+            {country && (
+              <div className="cities-container">
+                <h3>Cities</h3>
+                {country?.cities.length ? (
+                  country.cities.map((city, index) => (
+                    <div key={city?._id || index} className="city-field">
+                      <TextField
+                        value={city.name}
+                        onChange={(e) =>
+                          handleUpdateCity({
+                            _id: city._id,
+                            name: e.target.value,
+                          })
+                        }
+                        label={`City ${index + 1}`}
+                      />
+                      <Button onClick={() => handleDeleteCity(city?._id || "")}>
+                        Delete
+                      </Button>
+                    </div>
+                  ))
+                ) : (
+                  <div>No cities listed</div>
+                )}
+                <Button type="button" onClick={() => setOpenDialog(true)}>
+                  Add a city
+                </Button>
+              </div>
+            )}
+
             <div className="buttons-container">
               <Button
                 type="submit"
@@ -170,6 +277,11 @@ export const ValidationCountryData = () => {
           setCancelDialogOpen(false);
         }}
         onCancele={handleCancelEdit}
+      />
+      <CityInputDialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        onAddCity={handleAddCity}
       />
     </div>
   );

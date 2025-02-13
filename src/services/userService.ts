@@ -1,6 +1,7 @@
 import axios from "axios";
 import { userData, UserResponse, ErrorResponse } from "../types/userTypes";
 import API_URL from "../config/apiConfig";
+import { RequestData } from "../types/authorizationRequest";
 
 const apiUrl = `${API_URL}/user`;
 const apiAdminUrl = `${API_URL}/admin`;
@@ -169,9 +170,25 @@ export const deleteUser = async (userId: string) => {
     const response = await axios.delete(`${apiAdminUrl}/users/${userId}`, {
       withCredentials: true,
     });
-    console.log("response: ", response.data);
+    if (response.status === 200 || response.status === 204) {
+      return {
+        success: true,
+        status: response.status,
+        data: response.data.newUser,
+      };
+    } else {
+      return {
+        success: false,
+        status: response.status,
+        message: response?.data?.message || "Invalid credentials",
+      };
+    }
   } catch (error: any) {
-    console.log("something went wrong");
+    return {
+      success: false,
+      status: error.response?.status || 500,
+      message: error.response?.data?.message || "An error occurred",
+    };
   }
 };
 
@@ -188,9 +205,55 @@ export const changeRoleReqest = async (userId: string, role: string) => {
         withCredentials: true,
       }
     );
-    console.log("response: ", response.data);
+    if (response.status === 200) {
+      return {
+        success: true,
+        status: response.status,
+        data: response.data.newUser,
+      };
+    } else {
+      return {
+        success: false,
+        status: response.status,
+        message: response?.data?.message || "Invalid credentials",
+      };
+    }
   } catch (error: any) {
-    console.log("something went wrong");
+    return {
+      success: false,
+      status: error.response?.status || 500,
+      message: error.response?.data?.message || "An error occurred",
+    };
+  }
+};
+
+export const addUser = async (userData: userData) => {
+  console.log("addUser");
+  try {
+    const response = await axios.post(`${apiAdminUrl}/addUser`, userData, {
+      headers: { "Content-Type": "multipart/form-data" },
+      withCredentials: true,
+    });
+    console.log("response: ", response.data);
+    if (response.status === 200) {
+      return {
+        success: true,
+        status: response.status,
+        data: response.data.newUser,
+      };
+    } else {
+      return {
+        success: false,
+        status: response.status,
+        message: response?.data?.message || "Invalid credentials",
+      };
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      status: error.response?.status || 500,
+      message: error.response?.data?.message || "An error occurred",
+    };
   }
 };
 
@@ -219,7 +282,36 @@ export const changeRoleResponse = async (reqId: string, approved: boolean) => {
       }
     );
     console.log("response: ", response.data);
-  } catch {
-    console.log("something went wrong");
+    if (response.status === 200) {
+      const updateReq = response.data.reqest;
+      const permissionRequests = JSON.parse(
+        localStorage.getItem("permissionRequests") || "[]"
+      );
+      const updatedPermissionRequests = permissionRequests.map(
+        (request: RequestData) =>
+          request._id === updateReq._id ? { ...request, ...updateReq } : request
+      );
+      localStorage.setItem(
+        "permissionRequests",
+        JSON.stringify(updatedPermissionRequests)
+      );
+      return {
+        success: true,
+        status: response.status,
+        data: response.data,
+      };
+    } else {
+      return {
+        success: false,
+        status: response.status,
+        message: response?.data?.message || "Invalid credentials",
+      };
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      status: error.response?.status || 500,
+      message: error.response?.data?.message || "An error occurred",
+    };
   }
 };
